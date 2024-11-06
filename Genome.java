@@ -1,5 +1,15 @@
+import java.io.File;        //import connection to file
+import java.io.FileReader;  //import for reading file
 public class Genome {
-
+    
+    public static void exception(File a){               //extra method just for fun
+        if(a.length() % 3 != 0){                        //test if there are only 'triplets' in the file
+            System.out.println("ERROR");
+        }else{
+            System.out.println(a.length());             //just to print the length, so you can calculate yourself if it works
+        }
+    }
+    
     public static void main(String[] args) {
         String GenSeq = "ccctttatgbbbxxxtaaccctttccctttatgbbbssstaacccttt";
 
@@ -9,6 +19,14 @@ public class Genome {
         int startIndex = -1; // To track the starting index of "atg"
         int gencounter = 0;
 
+        File ecoli = new File("ecoli.txt");               //in() path for file
+        FileReader ecolireader = new FileReader(file);    //initialize FileReader and let it read the file
+        long leng = ecoli.length();                        
+        char[] car = new char[(int)leng];                 //length of Arry = length of file BUT cast long from filelength to int for arraylength
+        ecolireader.read(car);                            //let FileReader read the complete file and save on char Array
+
+        exception(file);                                 //extra method just for fun
+        
         int i = 0;
         while (i < GenSeqArr.length - 2) {
             //loop through characters in GenSeq
