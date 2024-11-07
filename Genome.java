@@ -37,9 +37,11 @@ public class Genome {
                     startIndex = i; // the index for the "a" in the atg starting sequence
                 }
                 // Check for the End sequences tga, tag, taa
-                if ((GenSeqArr[i] == 't' && GenSeqArr[i + 1] == 'a' && GenSeqArr[i + 2] == 'a') ||
-                        (GenSeqArr[i] == 't' && GenSeqArr[i + 1] == 'a' && GenSeqArr[i + 2] == 'g') ||
-                        (GenSeqArr[i] == 't' && GenSeqArr[i + 1] == 'g' && GenSeqArr[i + 2] == 'a') )
+                char c1 = GenSeqArr[i], c2 = GenSeqArr[i+1], c3 = GenSeqArr[i+2];
+                // if ((GenSeqArr[i] == 't' && GenSeqArr[i + 1] == 'a' && GenSeqArr[i + 2] == 'a') ||
+                //         (GenSeqArr[i] == 't' && GenSeqArr[i + 1] == 'a' && GenSeqArr[i + 2] == 'g') ||
+                //         (GenSeqArr[i] == 't' && GenSeqArr[i + 1] == 'g' && GenSeqArr[i + 2] == 'a') )
+                if ((c1 == 't' && c2 == 'a' && (c3 == 'a' || c3 == 'g')) || (c1 == 't' && c2 == 'g' && c3 == 'a')) // man koennte das auch noch kuerzen, aber so ist es noch relativ gut lesbar
                 {
                     if (startIndex != -1) { // If we found "atg" before any End sequence: Ignore
                         /*use substring command to extract part of string:
