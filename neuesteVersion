@@ -1,0 +1,144 @@
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+
+public class Markov {
+//    int[][] markovMatrix = new int[27][2];
+//    [0] ist leerzeichen von jetzt an und [1] ist a
+
+    // index eines charakters brauchen wir zum finden der richtigen spalte/zeile in der matrix
+    //length von -1 auf index da nicht bis z geganen
+    public static int findIndex(char[] array, char character) {
+        for (int index = 0; index < array.length; index++) {
+            if (array[index] == character) {
+                return index;
+            }
+        }
+        System.out.println("error");
+        return -1;
+    }//wirft exception ab 'j'?
+
+    // wie oft kommt ein bestimmter buchstabe in dem input string vor (brauchen wir zur berechnung der wahrscheinlichk.)
+    public static int howOften(String input, char character) {
+        int occurrence = 0;
+        //Aenderung index -1 auf index, und ocucrence++ auf ++occurence
+        for (int index = 0; index < input.length(); index++) {
+            if (input.charAt(index) == character) {
+                ++occurrence;
+            }
+        }
+        return occurrence;
+    }//zaehlt nur einen zu kurz
+
+    // bereinigt den input von grossbuchstaben
+    public static String normalizedInput(String input) {
+        char[] array = new char[input.length()+1];
+        for (int i=0; i<array.length; i++) {
+
+            if ('A' <= array[i] && array[i] <= 'Z') {
+                array[i] += 32;
+            }
+            else if (i < input.length() - 1) {
+                array[i] = input.charAt(i);
+            }
+//            else if (array[i] == ' ' || (array[i] >= 'a' && array[i] <= 'z')) {
+//                continue;
+//            }
+        }
+        String output = new String(array);
+        return output + ' ';
+        // space wird hier angefuegt weil sonst unsere funktion unten outOfBounds geht
+    }
+    public static String test = "Three civil brawls, bred of an airy wordBy thee %";
+
+    public static double[][] fillMatrix(String input) {
+        char[] characters = {' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+        double[][] markovMatrix = new double[27][28];
+        // 28 weil eine extra fuer die Summe. Wir loopen aber gleich nur bis 27
+        // int[] probabilities = new int[27];
+        for (int i = 0; i < 27; i++) {
+            int anzahlGefunden = howOften(input, characters[i]);
+            System.out.println(characters[i] + ": " + anzahlGefunden);
+
+            for (int j = 0; j < input.length() - 1; j++) {
+                if (input.charAt(j) == characters[i]) {
+                    while (!(('a' <= input.charAt(j+1) && input.charAt(j+1) <= 'z') || (input.charAt(j+1) == ' ')) && j < input.length() - 1) {
+                        j++;
+                    }
+
+                    markovMatrix[i][findIndex(characters, input.charAt(j+1))] += (double)1/anzahlGefunden;
+                }
+            }
+        }
+
+        for (int i = 0; i < 27; i++) {
+            double summe = 0;
+            for (int j = 0; j < 27; j++) {
+                summe += markovMatrix[i][j];
+            }
+            markovMatrix[i][27] = summe;
+        }
+        return markovMatrix;
+    }
+
+    public static void print2DArray(double[][] array) {
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                System.out.printf("%.2f ", array[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
+
+    public static void main(String[] args) {
+        /*//File Romeo = new File("C:/Users/herma/Desktop/IT/Semester 1/01. Einführung in die Informatik/Übung_tutorium/04 Markov/shakespeare.txt");
+        File Romeo = new File("C:/Users/herma/Desktop/shakespeare.txt");
+        FileReader RomeoReader = new FileReader(Romeo);
+        */
+        if (args.length == 0) {
+            System.out.println("Du hast keinen Dateipfad angegeben!");
+            return;
+        }
+
+        String romeoString = "";
+        try {
+            String dateiPfad = args[0];
+            romeoString = new String(Files.readAllBytes(Paths.get(dateiPfad)), StandardCharsets.US_ASCII);
+            System.out.println("Datei erfolgreich eingelesen!");
+        } catch (IOException einleseFehler) {
+            einleseFehler.printStackTrace();
+            return;
+        }
+
+        double[][] testMatrix = fillMatrix(normalizedInput(romeoString));
+
+        print2DArray(testMatrix);
+
+    }
+}
+
+
+
+
+
+/*****************************************************Idee fuer spaeter************************************************/
+
+//public static String removeMultipleSpaces(String input) {
+//        char[] array = input.toCharArray();
+//        int totalNumberOfSpaces = 0;
+//        for (int i = 0; i < array.length; i++) {
+//            if (array[i] == ' ') {
+//                int numberOfSpaces = 0;
+//                while (array[++i] == ' ') {
+//                    numberOfSpaces++;
+//                }
+//
+//                if (numberOfSpaces > 1) {
+//                    totalNumberOfSpaces += numberOfSpaces;
+//                }
+//
+//            }
+//        }
+//    }
